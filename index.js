@@ -2,7 +2,7 @@
 const { load } = require('archieml');
 const { google: googleApisInstance } = require('googleapis');
 
-async function readParagraphElement(element, data) {
+async function readParagraphElement(element, data, imageHandler) {
   // pull out the text
 
   const textRun = element.textRun;
