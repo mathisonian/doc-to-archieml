@@ -40,7 +40,7 @@ async function readParagraphElement(element, data) {
   }
 }
 
-async function readElements(document) {
+async function readElements(document, imageHandler) {
   // prepare the text holder
   let text = '';
 
