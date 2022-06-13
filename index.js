@@ -7,16 +7,18 @@ async function readParagraphElement(element, data, imageHandler) {
 
   const textRun = element.textRun;
 
+  
   // sometimes it's not there, skip this all if so
   if (textRun) {
     // sometimes the content isn't there, and if so, make it an empty string
+    // console.log(element);
     
     let content = textRun.content || '';
 
     // step through optional text styles to check for an associated URL
     if (!textRun.textStyle) return content;
 
-    // console.log(textRun.textStyle);
+    // console.log(textRun);
     if (textRun.textStyle.italic) {
       content = `<em>${content}</em>`
     }
@@ -39,11 +41,8 @@ async function readParagraphElement(element, data, imageHandler) {
       return content;
     }
   } else if (element.inlineObjectElement && imageHandler) {
-
     const objectId = element.inlineObjectElement.inlineObjectId;
-
     return await imageHandler(objectId, data);
-
   } else {
     return '';
   }
@@ -60,6 +59,7 @@ async function readElements(document, imageHandler) {
   // loop through each content element in the body
 
   for (const element of document.body.content) {
+
     if (element.paragraph) {
       // get the paragraph within the element
       const paragraph = element.paragraph;
@@ -72,6 +72,15 @@ async function readElements(document, imageHandler) {
         const values = paragraph.elements;
 
         let idx = 0;
+
+        const taggedText = (text) => {
+          if (paragraph.paragraphStyle && paragraph.paragraphStyle.namedStyleType.includes('HEADING')) {
+            const headingLevel = paragraph.paragraphStyle.namedStyleType.replace('HEADING_', '');
+            return `<h${headingLevel}>${text.trim()}</h${headingLevel}>\n`;
+          }
+          return text;
+        };
+        let elementText = '';
         for (const value of values) {
           // we only need to add a bullet to the first value, so we check
           const isFirstValue = idx === 0;
@@ -81,9 +90,10 @@ async function readElements(document, imageHandler) {
   
           // concat the text
           const _text = await readParagraphElement(value, document, imageHandler)
-          text += `${prefix}${_text}`;
+          elementText += `${prefix}${_text}`;
           idx++;
         }
+        text += taggedText(elementText);
       }
     }
   }
@@ -115,8 +125,6 @@ async function docToArchieML({
 
   // convert the doc's content to text ArchieML will understand
   const text = await readElements(data, imageHandler);
-
-  // console.log('text', text);
 
   // pass text to ArchieML and return results
   return load(text);
