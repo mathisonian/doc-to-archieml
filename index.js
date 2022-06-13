@@ -11,10 +11,19 @@ async function readParagraphElement(element, data, imageHandler) {
   if (textRun) {
     // sometimes the content isn't there, and if so, make it an empty string
     
-    const content = textRun.content || '';
+    let content = textRun.content || '';
 
     // step through optional text styles to check for an associated URL
     if (!textRun.textStyle) return content;
+
+    // console.log(textRun.textStyle);
+    if (textRun.textStyle.italic) {
+      content = `<em>${content}</em>`
+    }
+    if (textRun.textStyle.bold) {
+      content = `<b>${content}</b>`
+    }
+
     if (!textRun.textStyle.link) return content;
     if (!textRun.textStyle.link.url) return content;
 
@@ -102,8 +111,12 @@ async function docToArchieML({
     documentId,
   });
 
+  // console.log(JSON.stringify(data, null, 2))
+
   // convert the doc's content to text ArchieML will understand
   const text = await readElements(data, imageHandler);
+
+  // console.log('text', text);
 
   // pass text to ArchieML and return results
   return load(text);
