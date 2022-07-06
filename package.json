@@ -1,7 +1,7 @@
 {
   "name": "@mathisonian/doc-to-archieml",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Convert an ArchieML-formatted Google Doc directly into usable data using the Google Docs API.",
   "main": "index.js",
   "types": "types.d.ts",
