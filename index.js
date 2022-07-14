@@ -126,9 +126,12 @@ async function docToArchieML({
   // convert the doc's content to text ArchieML will understand
   let text = await readElements(data, imageHandler);
 
-  const refs = (text.match(/{ref}(.*?){\/ref}/gmis) || []).map(function(val, i){
+  const refs = (text.match(/{ref}(.*?){\/ref}/gims) || []).map(function(
+    val,
+    i
+  ) {
     text = text.replace(val, `<ref id="${i}" />`);
-    return val.replace(/\{\/?ref\}/g,'');
+    return val.replace(/\{\/?ref\}/g, '');
   });
 
   const parsed = load(text);
