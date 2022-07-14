@@ -124,10 +124,18 @@ async function docToArchieML({
   // console.log(JSON.stringify(data, null, 2))
 
   // convert the doc's content to text ArchieML will understand
-  const text = await readElements(data, imageHandler);
+  let text = await readElements(data, imageHandler);
+
+  const refs = (text.match(/{ref}(.*?){\/ref}/gmis) || []).map(function(val, i){
+    text = text.replace(val, `<ref id="${i}" />`);
+    return val.replace(/\{\/?ref\}/g,'');
+  });
+
+  const parsed = load(text);
+  parsed.refs = refs;
 
   // pass text to ArchieML and return results
-  return load(text);
+  return parsed;
 }
 
 module.exports = { docToArchieML };
