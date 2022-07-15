@@ -1,5 +1,5 @@
 {
-  "name": "@mathisonian/doc-to-archieml",
+  "name": "@ourworldindata/doc-to-archieml",
   "private": false,
   "version": "1.0.2",
   "description": "Convert an ArchieML-formatted Google Doc directly into usable data using the Google Docs API.",
