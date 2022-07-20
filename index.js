@@ -123,9 +123,8 @@ async function docToArchieML({
     documentId,
   });
 
-  // console.log(JSON.stringify(data, null, 2))
-
   // convert the doc's content to text ArchieML will understand
+
   let text = await readElements(data, imageHandler);
 
   const refs = (text.match(/{ref}(.*?){\/ref}/gims) || []).map(function(
@@ -139,6 +138,30 @@ async function docToArchieML({
   const parsed = load(text);
   
   parsed.refs = refs;
+
+  // Parse lists
+  parsed.body = parsed.body.reduce((memo, d, i) => {
+    if (d.type === 'text' && d.value.startsWith('* ')) {
+      if (memo.isInList) {
+        memo.body[memo.body.length - 1].value.push(d.value.replace('* ', '').trim());
+      } else {
+        memo.isInList = true;
+        memo.body.push({
+          type: 'list',
+          value: [d.value.replace('* ', '').trim()]
+        });
+      }
+    } else {
+      if (memo.isInList) {
+        memo.isInList = false;
+      }
+      memo.body.push(d);
+    }
+    return memo;
+  }, { 
+    isInList: false,
+    body: [],
+  }).body;
 
   // pass text to ArchieML and return results
   return parsed;
