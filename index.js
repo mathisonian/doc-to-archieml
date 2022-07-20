@@ -139,8 +139,13 @@ async function docToArchieML({
   
   parsed.refs = refs;
 
-  // Parse lists
+  // Parse lists and include lowercase vals
   parsed.body = parsed.body.reduce((memo, d, i) => {
+    
+    Object.keys(d).forEach((k) => {
+      d[k.toLowerCase()] = d[k];
+    })
+
     if (d.type === 'text' && d.value.startsWith('* ')) {
       if (memo.isInList) {
         memo.body[memo.body.length - 1].value.push(d.value.replace('* ', '').trim());
