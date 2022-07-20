@@ -11,7 +11,6 @@
   ],
   "scripts": {
     "docs": "doctoc README.md --github",
-    "git-pre-commit": "precise-commits",
     "prerelease": "yarn test",
     "release": "git push && git push --tags && yarn publish",
     "test": "mocha --timeout 5000 tests/test.js"

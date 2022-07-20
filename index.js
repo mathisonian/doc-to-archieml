@@ -43,6 +43,8 @@ async function readParagraphElement(element, data, imageHandler) {
   } else if (element.inlineObjectElement && imageHandler) {
     const objectId = element.inlineObjectElement.inlineObjectId;
     return await imageHandler(objectId, data);
+  } else if (element.horizontalRule) {
+    return `<hr />`;
   } else {
     return '';
   }
@@ -135,6 +137,7 @@ async function docToArchieML({
   });
 
   const parsed = load(text);
+  
   parsed.refs = refs;
 
   // pass text to ArchieML and return results
